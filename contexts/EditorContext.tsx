@@ -2,21 +2,13 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { toPng } from 'html-to-image';
+import { ImageEffects } from '@/types';
 
 interface TextElement {
   id: string;
   text: string;
   font: string;
   position: { x: number; y: number };
-}
-
-interface ImageEffects {
-  opacity: number;
-  brightness: number;
-  contrast: number;
-  saturation: number;
-  blur: number;
-  hue: number;
 }
 
 interface ImagePosition {
@@ -51,6 +43,12 @@ interface EditorContextType {
   ) => Promise<void>;
   startResizeMode: () => void;
   keepChanges: () => void;
+  backgroundColor: string;
+  frameColor: string;
+  cameraColor: string;
+  setBackgroundColor: (color: string) => void;
+  setFrameColor: (color: string) => void;
+  setCameraColor: (color: string) => void;
 }
 
 const defaultImageEffects: ImageEffects = {
@@ -79,6 +77,9 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [textElements, setTextElements] = useState<TextElement[]>([]);
   const [imageEffects, setImageEffects] =
     useState<ImageEffects>(defaultImageEffects);
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
+  const [frameColor, setFrameColor] = useState('#000000');
+  const [cameraColor, setCameraColor] = useState('#000000');
 
   const resetImageTransforms = () => {
     setScale(1);
@@ -235,6 +236,12 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         downloadDesign,
         startResizeMode,
         keepChanges,
+        backgroundColor,
+        frameColor,
+        cameraColor,
+        setBackgroundColor,
+        setFrameColor,
+        setCameraColor,
       }}
     >
       {children}

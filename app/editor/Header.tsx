@@ -17,7 +17,7 @@ export const Header = () => {
             <Share2 className="h-4 w-4 mr-2" />
             Share
           </Button>
-          <Button>
+          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity">
             <Download className="h-4 w-4 mr-2" />
             Download
           </Button>

@@ -8,7 +8,6 @@ import { useEditor } from '@/contexts/EditorContext';
 export const PhoneCaseBg = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const rndRef = useRef<Rnd>(null);
   const {
     originalImage,
     croppedImage,
@@ -19,6 +18,8 @@ export const PhoneCaseBg = () => {
     setIsResizeMode,
     scale,
     rotation,
+    imageEffects,
+    backgroundColor,
   } = useEditor();
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,8 +27,43 @@ export const PhoneCaseBg = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setOriginalImage(e.target?.result as string);
-        setIsResizeMode(true);
+        const img = document.createElement('img');
+        img.src = e.target?.result as string;
+
+        img.onload = () => {
+          const containerElement = document.querySelector(
+            '.phone-case-bg-container'
+          );
+          if (!containerElement) return;
+
+          const containerBounds = containerElement.getBoundingClientRect();
+          const imageAspectRatio = img.width / img.height;
+
+          let newWidth, newHeight;
+          if (imageAspectRatio > 1) {
+            // Landscape image
+            newWidth = containerBounds.width * 0.8;
+            newHeight = newWidth / imageAspectRatio;
+          } else {
+            // Portrait or square image
+            newHeight = containerBounds.height * 0.8;
+            newWidth = newHeight * imageAspectRatio;
+          }
+
+          // Center the image in the container
+          const newX = (containerBounds.width - newWidth) / 2;
+          const newY = (containerBounds.height - newHeight) / 2;
+
+          setImagePosition({
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight,
+          });
+
+          setOriginalImage(e.target?.result as string);
+          setIsResizeMode(true);
+        };
       };
       reader.readAsDataURL(file);
     }
@@ -49,6 +85,17 @@ export const PhoneCaseBg = () => {
     });
   };
 
+  const generateFilterString = (effects: typeof imageEffects) => {
+    return `
+      opacity(${effects.opacity}%)
+      brightness(${effects.brightness}%)
+      contrast(${effects.contrast}%)
+      saturate(${effects.saturation}%)
+      blur(${effects.blur}px)
+      hue-rotate(${effects.hue}deg)
+    `;
+  };
+
   const currentImage = isResizeMode
     ? originalImage
     : croppedImage || originalImage;
@@ -57,12 +104,14 @@ export const PhoneCaseBg = () => {
     <div
       ref={containerRef}
       className="phone-case-bg-container absolute top-0 left-0 w-full z-10 h-full rounded-[38px]"
+      style={{
+        backgroundColor,
+      }}
     >
-      {currentImage ? (
+      {currentImage && (
         <>
           {isResizeMode ? (
             <Rnd
-              ref={rndRef}
               default={imagePosition}
               position={{ x: imagePosition.x, y: imagePosition.y }}
               size={{
@@ -111,26 +160,13 @@ export const PhoneCaseBg = () => {
                 alt="Background"
                 className="pointer-events-none"
                 draggable={false}
+                style={{
+                  filter: generateFilterString(imageEffects),
+                }}
               />
             </div>
           )}
         </>
-      ) : (
-        <div className="w-full h-full flex items-center justify-center">
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Upload Image
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleUpload}
-            className="hidden"
-          />
-        </div>
       )}
     </div>
   );
