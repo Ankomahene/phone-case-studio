@@ -2,8 +2,6 @@
 import { IPhoneModel } from '@/types';
 import React from 'react';
 import { IphoneCamera } from '../cameras/Iphone';
-import { cn } from '@/lib/utils';
-import { useTheme } from 'next-themes';
 
 export type PhoneModel = 'iphone14' | 'iphone15' | 'iphone15pro';
 
@@ -20,10 +18,8 @@ export const IPhoneCase: React.FC<IPhoneCaseProps> = ({
   frameColor,
   cameraColor,
 }) => {
-  const { resolvedTheme } = useTheme();
-
   return (
-    <div className="relative w-[320px] h-[600px] mx-auto my-10">
+    <div className="phone-case-container relative w-[320px] h-[600px] mx-auto my-10 bg-transparent">
       {/* Side Buttons - Left Side */}
       <div className="absolute left-[-6px] top-[120px] h-[200px] flex flex-col gap-6 z-40 pointer-events-none">
         {/* Volume Up */}

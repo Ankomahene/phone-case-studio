@@ -13,6 +13,12 @@ import {
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useEditor } from '@/contexts/EditorContext';
 import { cn } from '@/lib/utils';
 import {
@@ -29,6 +35,9 @@ import {
   Trash2,
   Type,
   Upload,
+  Smartphone,
+  Sticker,
+  PaintBucket,
 } from 'lucide-react';
 import React, { useRef } from 'react';
 import { ChromePicker, CirclePicker } from 'react-color';
@@ -160,25 +169,91 @@ export const LeftSection = () => {
 
   return (
     <div className="w-full p-2">
-      <Tabs defaultValue="customize" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="customize">Customize</TabsTrigger>
-          <TabsTrigger value="text">Text</TabsTrigger>
+      <Tabs defaultValue="product" className="w-full">
+        <TabsList className="grid w-full grid-cols-6 mb-4">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="product">
+                  <Smartphone className="h-5 w-5" />
+                </TabsTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Product</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="uploads">
+                  <Upload className="h-5 w-5" />
+                </TabsTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Uploads</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="text">
+                  <Type className="h-5 w-5" />
+                </TabsTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Text</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="clipart">
+                  <Sticker className="h-5 w-5" />
+                </TabsTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Clip Art</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger value="fill">
+                  <PaintBucket className="h-5 w-5" />
+                </TabsTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Fill</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </TabsList>
 
-        <TabsContent value="customize" className="space-y-6">
-          {/* Image Upload Section */}
+        {/* Product Tab */}
+        <TabsContent value="product" className="space-y-6">
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium flex items-center gap-2">
+              <Smartphone className="w-4 h-4" />
+              Select Product
+            </h4>
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" className="h-20 flex flex-col gap-1">
+                <Smartphone className="w-8 h-8" />
+                <span className="text-xs">iPhone 14 Pro</span>
+              </Button>
+              <Button variant="outline" className="h-20 flex flex-col gap-1">
+                <Smartphone className="w-8 h-8" />
+                <span className="text-xs">iPhone 14</span>
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Uploads Tab */}
+        <TabsContent value="uploads" className="space-y-6">
           <div className="space-y-4">
             <h4 className="text-sm font-medium flex items-center gap-2">
               <ImageIcon className="w-4 h-4" />
-              Image
+              Upload Image
             </h4>
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:opacity-90 transition-opacity flex items-center justify-center gap-2 font-medium"
+              className="w-full h-32 border-2 border-dashed rounded-lg hover:bg-accent transition-colors flex flex-col items-center justify-center gap-2"
             >
-              <Upload className="w-4 h-4" />
-              {originalImage ? 'Replace Image' : 'Upload Image'}
+              <Upload className="w-8 h-8 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">
+                Drop image here or click to upload
+              </p>
             </button>
             <input
               ref={fileInputRef}
@@ -188,117 +263,10 @@ export const LeftSection = () => {
               className="hidden"
             />
           </div>
-
-          {/* Color Controls */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium flex items-center gap-2">
-              <Palette className="w-4 h-4" />
-              Colors
-            </h4>
-
-            {/* Background Color */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="w-full py-2 px-4 bg-background border border-input rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
-                  <span className="text-sm">Background Color</span>
-                  <div
-                    className="w-6 h-6 rounded-full border border-input"
-                    style={{ backgroundColor }}
-                  />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-3 bg-popover" align="start">
-                <div className="space-y-3">
-                  <div className="pt-2">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Presets
-                    </p>
-                    <CirclePicker
-                      colors={defaultColors}
-                      color={backgroundColor}
-                      onChange={(color) => handleColorChange(color, 'bg')}
-                    />
-                  </div>
-                  <Separator />
-                  <ChromePicker
-                    color={backgroundColor}
-                    onChange={(color) => handleColorChange(color, 'bg')}
-                    className="!shadow-none"
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            {/* Frame Color */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="w-full py-2 px-4 bg-background border border-input rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
-                  <span className="text-sm">Frame Color</span>
-                  <div
-                    className="w-6 h-6 rounded-full border border-input"
-                    style={{ backgroundColor: frameColor }}
-                  />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-3 bg-popover" align="start">
-                <div className="space-y-3">
-                  <div className="pt-2">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Presets
-                    </p>
-                    <CirclePicker
-                      colors={defaultColors}
-                      color={frameColor}
-                      onChange={(color) => handleColorChange(color, 'frame')}
-                    />
-                  </div>
-                  <Separator />
-                  <ChromePicker
-                    color={frameColor}
-                    onChange={(color) => handleColorChange(color, 'frame')}
-                    className="!shadow-none"
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            {/* Camera Color */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="w-full py-2 px-4 bg-background border border-input rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
-                  <span className="text-sm">Camera Color</span>
-                  <div
-                    className="w-6 h-6 rounded-full border border-input"
-                    style={{ backgroundColor: cameraColor }}
-                  />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-3 bg-popover" align="start">
-                <div className="space-y-3">
-                  <div className="pt-2">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Presets
-                    </p>
-                    <CirclePicker
-                      colors={defaultColors}
-                      color={cameraColor}
-                      onChange={(color) => handleColorChange(color, 'camera')}
-                    />
-                  </div>
-                  <Separator />
-                  <ChromePicker
-                    color={cameraColor}
-                    onChange={(color) => handleColorChange(color, 'camera')}
-                    className="!shadow-none"
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
         </TabsContent>
 
+        {/* Text Tab */}
         <TabsContent value="text" className="space-y-6">
-          {/* Text Controls */}
           <div className="space-y-4">
             <h4 className="text-sm font-medium flex items-center gap-2">
               <Type className="w-4 h-4" />
@@ -525,16 +493,11 @@ export const LeftSection = () => {
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-3" align="start">
                     <div className="space-y-3">
-                      <div className="pt-2">
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Presets
-                        </p>
-                        <CirclePicker
-                          colors={defaultColors}
-                          color={selectedText?.color}
-                          onChange={(color) => handleColorChange(color, 'text')}
-                        />
-                      </div>
+                      <CirclePicker
+                        colors={defaultColors}
+                        color={selectedText?.color}
+                        onChange={(color) => handleColorChange(color, 'text')}
+                      />
                       <Separator />
                       <ChromePicker
                         color={selectedText?.color}
@@ -554,6 +517,119 @@ export const LeftSection = () => {
                 </button>
               </div>
             )}
+          </div>
+        </TabsContent>
+
+        {/* Clip Art Tab */}
+        <TabsContent value="clipart" className="space-y-6">
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium flex items-center gap-2">
+              <Sticker className="w-4 h-4" />
+              Clip Art
+            </h4>
+            <div className="grid grid-cols-4 gap-2">
+              {/* Placeholder for clip art items */}
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="aspect-square rounded-lg bg-accent/50 animate-pulse"
+                />
+              ))}
+            </div>
+          </div>
+        </TabsContent>
+
+        {/* Fill Tab */}
+        <TabsContent value="fill" className="space-y-6">
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium flex items-center gap-2">
+              <PaintBucket className="w-4 h-4" />
+              Colors & Fills
+            </h4>
+
+            {/* Background Color */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="w-full py-2 px-4 bg-background border border-input rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
+                  <span className="text-sm">Background Color</span>
+                  <div
+                    className="w-6 h-6 rounded-full border border-input"
+                    style={{ backgroundColor }}
+                  />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start">
+                <div className="space-y-3">
+                  <CirclePicker
+                    colors={defaultColors}
+                    color={backgroundColor}
+                    onChange={(color) => handleColorChange(color, 'bg')}
+                  />
+                  <Separator />
+                  <ChromePicker
+                    color={backgroundColor}
+                    onChange={(color) => handleColorChange(color, 'bg')}
+                    className="!shadow-none"
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Frame Color */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="w-full py-2 px-4 bg-background border border-input rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
+                  <span className="text-sm">Frame Color</span>
+                  <div
+                    className="w-6 h-6 rounded-full border border-input"
+                    style={{ backgroundColor: frameColor }}
+                  />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start">
+                <div className="space-y-3">
+                  <CirclePicker
+                    colors={defaultColors}
+                    color={frameColor}
+                    onChange={(color) => handleColorChange(color, 'frame')}
+                  />
+                  <Separator />
+                  <ChromePicker
+                    color={frameColor}
+                    onChange={(color) => handleColorChange(color, 'frame')}
+                    className="!shadow-none"
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Camera Color */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="w-full py-2 px-4 bg-background border border-input rounded-lg hover:bg-accent transition-colors flex items-center justify-between">
+                  <span className="text-sm">Camera Color</span>
+                  <div
+                    className="w-6 h-6 rounded-full border border-input"
+                    style={{ backgroundColor: cameraColor }}
+                  />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-3" align="start">
+                <div className="space-y-3">
+                  <CirclePicker
+                    colors={defaultColors}
+                    color={cameraColor}
+                    onChange={(color) => handleColorChange(color, 'camera')}
+                  />
+                  <Separator />
+                  <ChromePicker
+                    color={cameraColor}
+                    onChange={(color) => handleColorChange(color, 'camera')}
+                    className="!shadow-none"
+                  />
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </TabsContent>
       </Tabs>

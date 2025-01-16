@@ -1,8 +1,15 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from 'react';
 import { toPng } from 'html-to-image';
 import { ImageEffects } from '@/types';
+import { getSystemFonts, fallbackFonts } from '@/lib/font-utils';
 
 interface TextElement {
   id: string;
@@ -53,6 +60,7 @@ interface EditorContextType {
   resetImageTransforms: () => void;
   textElements: TextElement[];
   selectedTextId: string | null;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   addText: () => void;
   updateTextPosition: (id: string, position: { x: number; y: number }) => void;
   updateTextContent: (id: string, text: string) => void;
@@ -63,9 +71,7 @@ interface EditorContextType {
   selectText: (id: string | null) => void;
   imageEffects: ImageEffects;
   updateImageEffects: (effects: Partial<ImageEffects>) => void;
-  downloadDesign: (
-    editorRef: React.RefObject<HTMLDivElement | null>
-  ) => Promise<void>;
+  downloadDesign: () => Promise<void>;
   startResizeMode: () => void;
   keepChanges: () => void;
   backgroundColor: string;
@@ -76,6 +82,8 @@ interface EditorContextType {
   setCameraColor: (color: string) => void;
   googleFonts: GoogleFont[];
   addGoogleFont: (font: GoogleFont) => void;
+  systemFonts: string[];
+  loadSystemFonts: () => Promise<void>;
 }
 
 const defaultImageEffects: ImageEffects = {
@@ -87,46 +95,10 @@ const defaultImageEffects: ImageEffects = {
   hue: 0,
 };
 
-export const EditorContext = createContext<EditorContextType>({
-  originalImage: null,
-  croppedImage: null,
-  isResizeMode: false,
-  imagePosition: { x: 0, y: 0, width: 400, height: 400 },
-  setImagePosition: () => {},
-  setOriginalImage: () => {},
-  setCroppedImage: () => {},
-  setIsResizeMode: () => {},
-  scale: 1,
-  setScale: () => {},
-  rotation: 0,
-  setRotation: () => {},
-  resetImageTransforms: () => {},
-  textElements: [],
-  selectedTextId: null,
-  addText: () => {},
-  updateTextPosition: () => {},
-  updateTextContent: () => {},
-  updateTextFont: () => {},
-  updateTextColor: () => {},
-  updateTextStyle: () => {},
-  removeText: () => {},
-  selectText: () => {},
-  imageEffects: defaultImageEffects,
-  updateImageEffects: () => {},
-  downloadDesign: async () => {},
-  startResizeMode: () => {},
-  keepChanges: () => {},
-  backgroundColor: '#ffffff',
-  frameColor: '#000000',
-  cameraColor: '#000000',
-  setBackgroundColor: () => {},
-  setFrameColor: () => {},
-  setCameraColor: () => {},
-  googleFonts: [],
-  addGoogleFont: () => {},
-});
+export const EditorContext = createContext<EditorContextType | null>(null);
 
 export function EditorProvider({ children }: { children: React.ReactNode }) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [isResizeMode, setIsResizeMode] = useState(false);
@@ -146,6 +118,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [frameColor, setFrameColor] = useState('#000000');
   const [cameraColor, setCameraColor] = useState('#000000');
   const [googleFonts, setGoogleFonts] = useState<GoogleFont[]>([]);
+  const [systemFonts, setSystemFonts] = useState<string[]>(fallbackFonts);
 
   const resetImageTransforms = () => {
     setScale(1);
@@ -293,13 +266,11 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     setImageEffects((prev) => ({ ...prev, ...effects }));
   };
 
-  const downloadDesign = async (
-    editorRef: React.RefObject<HTMLDivElement | null>
-  ) => {
-    if (!editorRef.current) return;
+  const downloadDesign = async () => {
+    if (!containerRef.current) return;
 
     try {
-      const dataUrl = await toPng(editorRef.current, {
+      const dataUrl = await toPng(containerRef.current, {
         quality: 1.0,
         backgroundColor: 'transparent',
       });
@@ -316,6 +287,16 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const addGoogleFont = (font: GoogleFont) => {
     setGoogleFonts((prev) => [...prev, font]);
   };
+
+  const loadSystemFonts = async () => {
+    const fonts = await getSystemFonts();
+    setSystemFonts(fonts);
+  };
+
+  // Load system fonts when the provider mounts
+  useEffect(() => {
+    loadSystemFonts();
+  }, []);
 
   return (
     <EditorContext.Provider
@@ -335,6 +316,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         resetImageTransforms,
         textElements,
         selectedTextId,
+        containerRef,
         addText,
         updateTextPosition,
         updateTextContent,
@@ -356,6 +338,8 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         setCameraColor,
         googleFonts,
         addGoogleFont,
+        systemFonts,
+        loadSystemFonts,
       }}
     >
       {children}

@@ -1,10 +1,9 @@
 'use client';
 import { EditorProvider } from '@/contexts/EditorContext';
-import React from 'react';
-import { LeftSection } from './LeftSection';
 import { Header } from './Header';
-import { RightSection } from './RightSection';
+import { LeftSection } from './LeftSection';
 import { MainCanvas } from './MainCanvas';
+import { RightSection } from './RightSection';
 
 export const Editor = () => {
   return (

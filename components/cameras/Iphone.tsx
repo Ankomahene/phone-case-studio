@@ -15,8 +15,6 @@ const cameraLayouts = {
 };
 
 export const IphoneCamera = ({ model, cameraColor }: IPhoneCameraProps) => {
-  const { resolvedTheme } = useTheme();
-
   return (
     <div
       className={cn(
