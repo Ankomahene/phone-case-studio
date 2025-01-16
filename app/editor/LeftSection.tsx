@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import React, { useRef } from 'react';
 import { ChromePicker, CirclePicker } from 'react-color';
+import { AddGoogleFont } from '@/components/AddGoogleFont';
 
 const defaultColors = [
   '#f44336',
@@ -83,6 +84,7 @@ export const LeftSection = () => {
     updateTextStyle,
     removeText,
     setImagePosition,
+    googleFonts,
   } = useEditor();
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -313,23 +315,48 @@ export const LeftSection = () => {
             {selectedTextId && (
               <div className="space-y-4 pt-2">
                 {/* Font Controls */}
-                <Select
-                  value={selectedText?.font}
-                  onValueChange={(value: string) =>
-                    updateTextFont(selectedTextId, value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select font" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {fonts.map((font) => (
-                      <SelectItem key={font} value={font}>
-                        <span style={{ fontFamily: font }}>{font}</span>
+                <div className="space-y-2">
+                  <Select
+                    value={selectedText?.font}
+                    onValueChange={(value: string) =>
+                      updateTextFont(selectedTextId, value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__system_fonts" disabled>
+                        System Fonts
                       </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                      {fonts.map((font) => (
+                        <SelectItem key={font} value={font}>
+                          <span style={{ fontFamily: font }}>{font}</span>
+                        </SelectItem>
+                      ))}
+
+                      {googleFonts.length > 0 && (
+                        <>
+                          <SelectItem
+                            value="__google_fonts"
+                            disabled
+                            className="mt-2"
+                          >
+                            Google Fonts
+                          </SelectItem>
+                          {googleFonts.map((font) => (
+                            <SelectItem key={font.family} value={font.family}>
+                              <span style={{ fontFamily: font.family }}>
+                                {font.family}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <AddGoogleFont />
+                </div>
 
                 {/* Font Size */}
                 <div className="flex items-center gap-2">

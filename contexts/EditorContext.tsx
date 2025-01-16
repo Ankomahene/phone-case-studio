@@ -32,6 +32,11 @@ interface ImagePosition {
   height: number;
 }
 
+interface GoogleFont {
+  family: string;
+  link: string;
+}
+
 interface EditorContextType {
   originalImage: string | null;
   croppedImage: string | null;
@@ -69,6 +74,8 @@ interface EditorContextType {
   setBackgroundColor: (color: string) => void;
   setFrameColor: (color: string) => void;
   setCameraColor: (color: string) => void;
+  googleFonts: GoogleFont[];
+  addGoogleFont: (font: GoogleFont) => void;
 }
 
 const defaultImageEffects: ImageEffects = {
@@ -80,7 +87,44 @@ const defaultImageEffects: ImageEffects = {
   hue: 0,
 };
 
-const EditorContext = createContext<EditorContextType | null>(null);
+export const EditorContext = createContext<EditorContextType>({
+  originalImage: null,
+  croppedImage: null,
+  isResizeMode: false,
+  imagePosition: { x: 0, y: 0, width: 400, height: 400 },
+  setImagePosition: () => {},
+  setOriginalImage: () => {},
+  setCroppedImage: () => {},
+  setIsResizeMode: () => {},
+  scale: 1,
+  setScale: () => {},
+  rotation: 0,
+  setRotation: () => {},
+  resetImageTransforms: () => {},
+  textElements: [],
+  selectedTextId: null,
+  addText: () => {},
+  updateTextPosition: () => {},
+  updateTextContent: () => {},
+  updateTextFont: () => {},
+  updateTextColor: () => {},
+  updateTextStyle: () => {},
+  removeText: () => {},
+  selectText: () => {},
+  imageEffects: defaultImageEffects,
+  updateImageEffects: () => {},
+  downloadDesign: async () => {},
+  startResizeMode: () => {},
+  keepChanges: () => {},
+  backgroundColor: '#ffffff',
+  frameColor: '#000000',
+  cameraColor: '#000000',
+  setBackgroundColor: () => {},
+  setFrameColor: () => {},
+  setCameraColor: () => {},
+  googleFonts: [],
+  addGoogleFont: () => {},
+});
 
 export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -101,6 +145,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [frameColor, setFrameColor] = useState('#000000');
   const [cameraColor, setCameraColor] = useState('#000000');
+  const [googleFonts, setGoogleFonts] = useState<GoogleFont[]>([]);
 
   const resetImageTransforms = () => {
     setScale(1);
@@ -268,6 +313,10 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const addGoogleFont = (font: GoogleFont) => {
+    setGoogleFonts((prev) => [...prev, font]);
+  };
+
   return (
     <EditorContext.Provider
       value={{
@@ -305,6 +354,8 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         setBackgroundColor,
         setFrameColor,
         setCameraColor,
+        googleFonts,
+        addGoogleFont,
       }}
     >
       {children}
