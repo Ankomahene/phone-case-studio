@@ -88,11 +88,9 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const startResizeMode = () => {
     setCroppedImage(null);
     setIsResizeMode(true);
-    resetImageTransforms();
   };
 
   const keepChanges = async () => {
-    // Find the phone case container element
     const containerElement = document.querySelector('.phone-case-bg-container');
     const rndElement = containerElement?.querySelector('.react-draggable');
 
@@ -120,9 +118,9 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
 
     await new Promise((resolve) => {
       img.onload = () => {
-        // Calculate the scale ratios
-        const scaleRatioX = rndBounds.width / img.width;
-        const scaleRatioY = rndBounds.height / img.height;
+        // Calculate the scale ratios based on both manual scale and resize dimensions
+        const scaleRatioX = (rndBounds.width / img.width) * scale;
+        const scaleRatioY = (rndBounds.height / img.height) * scale;
 
         // Save the canvas state
         ctx.save();
@@ -132,7 +130,11 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
           relativeX + rndBounds.width / 2,
           relativeY + rndBounds.height / 2
         );
+
+        // Apply rotation in radians
         ctx.rotate((rotation * Math.PI) / 180);
+
+        // Apply both resize and manual scaling
         ctx.scale(scaleRatioX, scaleRatioY);
 
         // Draw the image centered at the transformed position
@@ -147,19 +149,15 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         // Restore canvas state
         ctx.restore();
 
-        // Convert to base64, save, and trigger download
+        // Convert to base64 and save
         const croppedImage = canvas.toDataURL('image/png');
         setCroppedImage(croppedImage);
-
-        // Create and trigger download link
-        const link = document.createElement('a');
-        link.download = 'cropped-image.png';
-        link.href = croppedImage;
-        link.click();
         resolve(null);
       };
     });
 
+    // Reset transforms after cropping
+    resetImageTransforms();
     setIsResizeMode(false);
   };
 

@@ -29,21 +29,59 @@ export const RightSection = () => {
     startResizeMode,
     keepChanges,
     setOriginalImage,
+    imagePosition,
+    setImagePosition,
   } = useEditor();
 
   const handleRotateLeft = () => {
     const newRotation = rotation - 90;
     setRotation(newRotation);
+
+    // Get the current Rnd element
+    const rndElement = document.querySelector('.react-draggable');
+    if (!rndElement) return;
+
+    // Get current bounds
+    const bounds = rndElement.getBoundingClientRect();
+    setImagePosition({
+      ...imagePosition,
+      width: bounds.width,
+      height: bounds.height,
+    });
   };
 
   const handleRotateRight = () => {
     const newRotation = rotation + 90;
     setRotation(newRotation);
+
+    // Get the current Rnd element
+    const rndElement = document.querySelector('.react-draggable');
+    if (!rndElement) return;
+
+    // Get current bounds
+    const bounds = rndElement.getBoundingClientRect();
+    setImagePosition({
+      ...imagePosition,
+      width: bounds.width,
+      height: bounds.height,
+    });
   };
 
   const handleScaleChange = (delta: number) => {
     const newScale = Math.max(0.1, Math.min(5, scale + delta));
     setScale(newScale);
+
+    // Get the current Rnd element
+    const rndElement = document.querySelector('.react-draggable');
+    if (!rndElement) return;
+
+    // Get current bounds
+    const bounds = rndElement.getBoundingClientRect();
+    setImagePosition({
+      ...imagePosition,
+      width: bounds.width,
+      height: bounds.height,
+    });
   };
 
   const handleEffectChange = (
@@ -51,6 +89,17 @@ export const RightSection = () => {
     value: number
   ) => {
     updateImageEffects({ [effect]: value });
+  };
+
+  const handleResetTransforms = () => {
+    resetImageTransforms();
+    // Reset position to default
+    setImagePosition({
+      x: 0,
+      y: 0,
+      width: 400,
+      height: 400,
+    });
   };
 
   const hasImage = Boolean(originalImage);
@@ -76,13 +125,18 @@ export const RightSection = () => {
         {hasImage && (
           <>
             {/* Resize Mode Controls */}
-            <div className={cn('space-y-4', !isResizeMode && 'opacity-50')}>
+            <div className={cn('space-y-4')}>
               <h4 className="text-sm font-medium flex items-center gap-2">
                 <Crop className="w-4 h-4" />
                 Resize & Position
               </h4>
 
-              <div className="flex items-center justify-between gap-2">
+              <div
+                className={cn(
+                  'flex items-center justify-between gap-2',
+                  !isResizeMode && 'opacity-50'
+                )}
+              >
                 <span className="text-sm">Rotation</span>
                 <div className="flex gap-2">
                   <button
@@ -104,7 +158,12 @@ export const RightSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-2">
+              <div
+                className={cn(
+                  'flex items-center justify-between gap-2',
+                  !isResizeMode && 'opacity-50'
+                )}
+              >
                 <span className="text-sm">Scale</span>
                 <div className="flex items-center gap-2">
                   <button
@@ -132,7 +191,7 @@ export const RightSection = () => {
               {isResizeMode ? (
                 <>
                   <button
-                    onClick={resetImageTransforms}
+                    onClick={handleResetTransforms}
                     className="w-full py-2 px-4 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2"
                   >
                     <Maximize className="w-4 h-4" />
@@ -194,7 +253,7 @@ export const RightSection = () => {
               ))}
 
               <button
-                onClick={resetImageTransforms}
+                onClick={handleResetTransforms}
                 disabled={!isCropped || isResizeMode}
                 className="w-full py-2 px-4 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >

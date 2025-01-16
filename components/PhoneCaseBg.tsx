@@ -17,6 +17,8 @@ export const PhoneCaseBg = () => {
     setImagePosition,
     setOriginalImage,
     setIsResizeMode,
+    scale,
+    rotation,
   } = useEditor();
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,7 +87,13 @@ export const PhoneCaseBg = () => {
                   : {}
               }
             >
-              <div className="relative w-full h-full">
+              <div
+                className="relative w-full h-full"
+                style={{
+                  transform: `scale(${scale}) rotate(${rotation}deg)`,
+                  transformOrigin: 'center center',
+                }}
+              >
                 <Image
                   fill
                   src={currentImage}
