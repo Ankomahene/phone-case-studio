@@ -8,7 +8,21 @@ interface TextElement {
   id: string;
   text: string;
   font: string;
+  color: string;
   position: { x: number; y: number };
+  fontSize: number;
+  isBold: boolean;
+  isItalic: boolean;
+  isUppercase: boolean;
+  textAlign: 'left' | 'center' | 'right';
+}
+
+interface TextStyle {
+  fontSize?: number;
+  isBold?: boolean;
+  isItalic?: boolean;
+  isUppercase?: boolean;
+  textAlign?: 'left' | 'center' | 'right';
 }
 
 interface ImagePosition {
@@ -33,9 +47,15 @@ interface EditorContextType {
   setRotation: (rotation: number) => void;
   resetImageTransforms: () => void;
   textElements: TextElement[];
-  addText: (text: string, font: string) => void;
+  selectedTextId: string | null;
+  addText: () => void;
   updateTextPosition: (id: string, position: { x: number; y: number }) => void;
+  updateTextContent: (id: string, text: string) => void;
+  updateTextFont: (id: string, font: string) => void;
+  updateTextColor: (id: string, color: string) => void;
+  updateTextStyle: (id: string, style: TextStyle) => void;
   removeText: (id: string) => void;
+  selectText: (id: string | null) => void;
   imageEffects: ImageEffects;
   updateImageEffects: (effects: Partial<ImageEffects>) => void;
   downloadDesign: (
@@ -75,6 +95,7 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [textElements, setTextElements] = useState<TextElement[]>([]);
+  const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
   const [imageEffects, setImageEffects] =
     useState<ImageEffects>(defaultImageEffects);
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
@@ -162,16 +183,21 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     setIsResizeMode(false);
   };
 
-  const addText = (text: string, font: string) => {
-    setTextElements((prev) => [
-      ...prev,
-      {
-        id: Math.random().toString(36).substr(2, 9),
-        text,
-        font,
-        position: { x: 0, y: 0 },
-      },
-    ]);
+  const addText = () => {
+    const newText: TextElement = {
+      id: Math.random().toString(36).substr(2, 9),
+      text: 'Double click to edit',
+      font: 'Arial',
+      color: '#000000',
+      position: { x: 50, y: 50 },
+      fontSize: 16,
+      isBold: false,
+      isItalic: false,
+      isUppercase: false,
+      textAlign: 'left',
+    };
+    setTextElements((prev) => [...prev, newText]);
+    setSelectedTextId(newText.id);
   };
 
   const updateTextPosition = (
@@ -183,8 +209,39 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
+  const updateTextContent = (id: string, text: string) => {
+    setTextElements((prev) =>
+      prev.map((el) => (el.id === id ? { ...el, text } : el))
+    );
+  };
+
+  const updateTextFont = (id: string, font: string) => {
+    setTextElements((prev) =>
+      prev.map((el) => (el.id === id ? { ...el, font } : el))
+    );
+  };
+
+  const updateTextColor = (id: string, color: string) => {
+    setTextElements((prev) =>
+      prev.map((el) => (el.id === id ? { ...el, color } : el))
+    );
+  };
+
+  const updateTextStyle = (id: string, style: TextStyle) => {
+    setTextElements((prev) =>
+      prev.map((el) => (el.id === id ? { ...el, ...style } : el))
+    );
+  };
+
   const removeText = (id: string) => {
     setTextElements((prev) => prev.filter((el) => el.id !== id));
+    if (selectedTextId === id) {
+      setSelectedTextId(null);
+    }
+  };
+
+  const selectText = (id: string | null) => {
+    setSelectedTextId(id);
   };
 
   const updateImageEffects = (effects: Partial<ImageEffects>) => {
@@ -228,9 +285,15 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
         setRotation,
         resetImageTransforms,
         textElements,
+        selectedTextId,
         addText,
         updateTextPosition,
+        updateTextContent,
+        updateTextFont,
+        updateTextColor,
+        updateTextStyle,
         removeText,
+        selectText,
         imageEffects,
         updateImageEffects,
         downloadDesign,

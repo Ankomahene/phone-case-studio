@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { Rnd } from 'react-rnd';
 import { ResizeControl } from './ResizeControl';
 import { useEditor } from '@/contexts/EditorContext';
+import { TextElement } from './TextElement';
 
 export const PhoneCaseBg = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -20,54 +21,12 @@ export const PhoneCaseBg = () => {
     rotation,
     imageEffects,
     backgroundColor,
+    textElements,
+    selectedTextId,
+    updateTextPosition,
+    updateTextContent,
+    selectText,
   } = useEditor();
-
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = document.createElement('img');
-        img.src = e.target?.result as string;
-
-        img.onload = () => {
-          const containerElement = document.querySelector(
-            '.phone-case-bg-container'
-          );
-          if (!containerElement) return;
-
-          const containerBounds = containerElement.getBoundingClientRect();
-          const imageAspectRatio = img.width / img.height;
-
-          let newWidth, newHeight;
-          if (imageAspectRatio > 1) {
-            // Landscape image
-            newWidth = containerBounds.width * 0.8;
-            newHeight = newWidth / imageAspectRatio;
-          } else {
-            // Portrait or square image
-            newHeight = containerBounds.height * 0.8;
-            newWidth = newHeight * imageAspectRatio;
-          }
-
-          // Center the image in the container
-          const newX = (containerBounds.width - newWidth) / 2;
-          const newY = (containerBounds.height - newHeight) / 2;
-
-          setImagePosition({
-            x: newX,
-            y: newY,
-            width: newWidth,
-            height: newHeight,
-          });
-
-          setOriginalImage(e.target?.result as string);
-          setIsResizeMode(true);
-        };
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleDragStop = (e: any, d: { x: number; y: number }) => {
     setImagePosition({ ...imagePosition, x: d.x, y: d.y });
@@ -100,6 +59,10 @@ export const PhoneCaseBg = () => {
     ? originalImage
     : croppedImage || originalImage;
 
+  const handleContainerClick = () => {
+    selectText(null);
+  };
+
   return (
     <div
       ref={containerRef}
@@ -107,8 +70,9 @@ export const PhoneCaseBg = () => {
       style={{
         backgroundColor,
       }}
+      onClick={handleContainerClick}
     >
-      {currentImage && (
+      {currentImage ? (
         <>
           {isResizeMode ? (
             <Rnd
@@ -167,7 +131,19 @@ export const PhoneCaseBg = () => {
             </div>
           )}
         </>
-      )}
+      ) : null}
+
+      {/* Text Elements */}
+      {textElements.map((element) => (
+        <TextElement
+          key={element.id}
+          {...element}
+          isSelected={selectedTextId === element.id}
+          onSelect={() => selectText(element.id)}
+          onPositionChange={(x, y) => updateTextPosition(element.id, { x, y })}
+          onTextChange={(text) => updateTextContent(element.id, text)}
+        />
+      ))}
     </div>
   );
 };
