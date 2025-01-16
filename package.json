@@ -9,32 +9,39 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.1.0",
-    "fabric": "^5.3.0",
-    "react-color": "^2.19.3",
+    "@hookform/resolvers": "^3.10.0",
+    "@next/swc-wasm-nodejs": "13.5.1",
+    "@radix-ui/react-scroll-area": "^1.2.2",
+    "@radix-ui/react-separator": "^1.1.1",
+    "@radix-ui/react-slider": "^1.2.2",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "@radix-ui/react-toast": "^1.2.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "fabric": "^6.5.4",
+    "framer-motion": "^11.16.4",
+    "html-to-image": "^1.11.11",
+    "lucide-react": "^0.469.0",
+    "next": "15.1.4",
+    "next-themes": "^0.4.4",
+    "react": "^19",
+    "react-colorful": "^5.6.1",
+    "react-dom": "^19",
     "react-dropzone": "^14.2.3",
-    "@react-three/fiber": "^8.15.0",
-    "@react-three/drei": "^9.97.0",
-    "three": "^0.161.0",
-    "next-themes": "^0.2.1",
-    "framer-motion": "^11.0.3",
-    "lucide-react": "^0.330.0"
+    "react-rnd": "^10.4.14",
+    "three": "^0.161.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/fabric": "^5.3.9",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "autoprefixer": "^10.0.1",
-    "postcss": "^8",
-    "tailwindcss": "^3.3.0",
     "eslint": "^8",
-    "eslint-config-next": "14.1.0"
-  },
-  "overrides": {
-    "@types/react": "19.0.4",
-    "@types/react-dom": "19.0.2"
+    "eslint-config-next": "14.1.0",
+    "postcss": "^8",
+    "tailwind-merge": "^2.5.2",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
   }
 }

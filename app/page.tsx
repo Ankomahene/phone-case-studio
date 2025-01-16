@@ -1,6 +1,7 @@
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { HowItWorks } from '@/components/HowItWorks';
+import PhoneCase from '@/components/PhoneCase';
 import { PhoneCaseSelector } from '@/components/PhoneCaseSelector';
 import React from 'react';
 const HomePage = () => {
@@ -10,6 +11,7 @@ const HomePage = () => {
       <Hero />
       <HowItWorks />
       <PhoneCaseSelector />
+      {/* <PhoneCase /> */}
     </main>
   );
 };
