@@ -1,15 +1,16 @@
 'use client';
 
+import { fallbackFonts, getSystemFonts } from '@/lib/font-utils';
+import { ImageEffects } from '@/types';
+import { useToJpeg, useToPng, useToSvg } from '@hugocxl/react-to-image';
 import React, {
+  ReactInstance,
   createContext,
   useContext,
-  useState,
   useEffect,
   useRef,
+  useState,
 } from 'react';
-import { toPng } from 'html-to-image';
-import { ImageEffects } from '@/types';
-import { getSystemFonts, fallbackFonts } from '@/lib/font-utils';
 
 interface TextElement {
   id: string;
@@ -99,6 +100,21 @@ export const EditorContext = createContext<EditorContextType | null>(null);
 
 export function EditorProvider({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [state, convert] = useToPng<HTMLDivElement>({
+    selector: '#phone-case-container',
+    quality: 1.0,
+    style: {
+      transform: 'scale(1)',
+    },
+    onSuccess: (data) => {
+      const link = document.createElement('a');
+      link.href = data;
+      link.download = crypto.randomUUID() + '.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+  });
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [croppedImage, setCroppedImage] = useState<string | null>(null);
   const [isResizeMode, setIsResizeMode] = useState(false);
@@ -267,21 +283,18 @@ export function EditorProvider({ children }: { children: React.ReactNode }) {
   };
 
   const downloadDesign = async () => {
-    if (!containerRef.current) return;
+    console.log(state);
+    const shadowElement = document.querySelector('.shadow-element');
 
-    try {
-      const dataUrl = await toPng(containerRef.current, {
-        quality: 1.0,
-        backgroundColor: 'transparent',
-      });
+    // reduce opacity of shadowElement to zero
+    // if (shadowElement) {
+    //   shadowElement.classList.add('opacity-0');
+    // }
 
-      const link = document.createElement('a');
-      link.download = 'custom-phone-case.png';
-      link.href = dataUrl;
-      link.click();
-    } catch (err) {
-      console.error('Failed to download design:', err);
-    }
+    // // Wait for next frame to ensure styles are applied
+    requestAnimationFrame(() => {
+      convert();
+    });
   };
 
   const addGoogleFont = (font: GoogleFont) => {

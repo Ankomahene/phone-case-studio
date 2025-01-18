@@ -3,11 +3,11 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useEditor } from '@/contexts/EditorContext';
-import { Download, Share2 } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useCallback } from 'react';
 
 export const Header = () => {
-  const { downloadDesign } = useEditor();
+  const { downloadDesign, isResizeMode } = useEditor();
 
   const handleDownload = useCallback(async () => {
     try {
@@ -24,13 +24,10 @@ export const Header = () => {
       </div>
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-2">
-          <Button variant="outline">
-            <Share2 className="h-4 w-4 mr-2" />
-            Share
-          </Button>
           <Button
             onClick={handleDownload}
             className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity"
+            disabled={isResizeMode}
           >
             <Download className="h-4 w-4 mr-2" />
             Download

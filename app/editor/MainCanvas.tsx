@@ -8,8 +8,11 @@ export const MainCanvas = forwardRef<HTMLDivElement>(() => {
   const { frameColor, cameraColor, containerRef } = useEditor();
 
   return (
-    <div className="relative w-[90%] h-[90%] m-4 border border-dashed border-gray-400 dark:border-gray-700 rounded-lg overflow-hidden">
-      <div ref={containerRef} className="w-fit mx-auto">
+    <div className="w-[90%] h-[90%] border border-dashed border-gray-400 dark:border-gray-700 rounded-lg overflow-hidden flex items-center justify-center">
+      <div
+        id="phone-case-container"
+        className="w-[320px] h-[600px] rounded-[38px]"
+      >
         <IPhoneCase
           model="iphone14"
           frameColor={frameColor}

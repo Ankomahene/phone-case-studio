@@ -19,7 +19,7 @@ export const IPhoneCase: React.FC<IPhoneCaseProps> = ({
   cameraColor,
 }) => {
   return (
-    <div className="phone-case-container relative w-[320px] h-[600px] mx-auto my-10 bg-transparent">
+    <div className="relative h-full w-full rounded-[38px]">
       {/* Side Buttons - Left Side */}
       <div className="absolute left-[-6px] top-[120px] h-[200px] flex flex-col gap-6 z-40 pointer-events-none">
         {/* Volume Up */}
@@ -61,21 +61,18 @@ export const IPhoneCase: React.FC<IPhoneCaseProps> = ({
         />
       </div>
 
-      {/* Phone Case Back */}
-      <div className="relative h-full w-full rounded-[38px]">
-        <div
-          className="absolute h-full w-full rounded-[38px] shadow-xl bg-transparent border-[6px] z-40 pointer-events-none"
-          style={{ borderColor: frameColor }}
-        />
+      <div
+        className="absolute h-full w-full rounded-[38px] shadow-xl bg-transparent border-[6px] z-40 pointer-events-none"
+        style={{ borderColor: frameColor }}
+      />
 
-        {/* Outer Shadow */}
-        <div className="absolute inset-0 rounded-[38px] z-30 top-0 right-0 left-0 bottom-0 shadow-[0_0_0_100vh_rgba(229,231,235,0.8)] dark:shadow-[0_0_0_100vh_rgba(17,24,39,0.8)] bg-transparent pointer-events-none" />
+      {/* Outer Shadow */}
+      <div className="shadow-element absolute inset-0 rounded-[38px] z-30 top-[-12px] right-[-12px] left-[-12px] bottom-[-12px]  shadow-[0_0_0_100vh_rgba(229,231,235,0.8)] dark:shadow-[0_0_0_100vh_rgba(17,24,39,0.8)] bg-transparent pointer-events-none" />
 
-        {/* Camera Module */}
-        <IphoneCamera model={model} cameraColor={cameraColor} />
+      {/* Camera Module */}
+      <IphoneCamera model={model} cameraColor={cameraColor} />
 
-        {children}
-      </div>
+      {children}
     </div>
   );
 };

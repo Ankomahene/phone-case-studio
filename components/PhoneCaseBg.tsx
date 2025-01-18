@@ -1,22 +1,17 @@
 'use client';
-import React, { useRef } from 'react';
+import { useEditor } from '@/contexts/EditorContext';
 import Image from 'next/image';
 import { Rnd } from 'react-rnd';
 import { ResizeControl } from './ResizeControl';
-import { useEditor } from '@/contexts/EditorContext';
 import { TextElement } from './TextElement';
 
 export const PhoneCaseBg = () => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const {
     originalImage,
     croppedImage,
     isResizeMode,
     imagePosition,
     setImagePosition,
-    setOriginalImage,
-    setIsResizeMode,
     scale,
     rotation,
     imageEffects,
@@ -65,7 +60,6 @@ export const PhoneCaseBg = () => {
 
   return (
     <div
-      ref={containerRef}
       className="phone-case-bg-container absolute top-0 left-0 w-full z-10 h-full rounded-[38px]"
       style={{
         backgroundColor,
